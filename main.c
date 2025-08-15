@@ -161,8 +161,8 @@ static void render_frame(struct wsk_state *state) {
 		state->height = 0;
 		wl_surface_commit(state->surface);
 	}
-	else if (width / scale > state->width || height / scale > state->height) {
-		// Increase layer_surface so that more keys can be shown.
+	else if (width / scale != state->width || height / scale != state->height) {
+		// Change layer_surface (currently only increase so that more keys can be shown)
 		zwlr_layer_surface_v1_set_size(
 				state->layer_surface, width / scale, height / scale);
         // TODO: this could infinite loop if the compositor assigns us a
@@ -440,7 +440,6 @@ static void handle_libinput_event(struct wsk_state *state,
 		keypress->sym = keysym;
 		xkb_keysym_get_name(keypress->sym, keypress->name,
 				sizeof(keypress->name));
-
 		if (xkb_state_key_get_utf8(state->xkb_state, keycode,
 				keypress->utf8, sizeof(keypress->utf8)) <= 0 ||
 				keypress->utf8[0] <= ' ') {
